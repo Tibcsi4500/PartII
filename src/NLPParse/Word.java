@@ -11,11 +11,15 @@ public class Word {
     }
 
     public static List<Word> matchWords(List<Word> candidates, String target){
-        if(candidates == null || target == null)
+        if(candidates == null || target == null){
             return new ArrayList<>();
+        }
 
         List<Word> results = new ArrayList<>();
         for (Word candidate : candidates) {
+            if(target == "kick"){
+                System.out.println("heyhey");
+            }
             if(candidate.isInstance(target)){
                 results.add(candidate);
             }
@@ -35,6 +39,7 @@ public class Word {
 
     public Word(String string, Type type) {
         this.string = string;
+        this.synonyms = new ArrayList<>();
         this.type = type;
     }
 

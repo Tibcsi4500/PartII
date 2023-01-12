@@ -1,6 +1,8 @@
 package NLPParse;
 
+import java.util.List;
+
 public class ParseResult {
     ContextItem verb, object;
-    ContextItem extraObjects;
+    List<ContextItem> extraObjects;
 }

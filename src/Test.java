@@ -8,7 +8,7 @@ public class Test {
     public static void main(String[] args) {
         List<ContextAction> context = constructContext();
         Parser parser = new Parser(false, false, false, context);
-        parser.parse("grid");
+        parser.parse(" Kick red ?!?! ball---  ");
     }
 
     private static List<ContextAction> constructContext(){
@@ -26,6 +26,14 @@ public class Test {
         List<ContextAction> actionList = new ArrayList<>();
         actionList.add(kickballaction);
         actionList.add(kickgridaction);
+
+        Word gridAdj = new Word("grid", Word.Type.ADJECTIVE);
+        List<Word> gridlist = new ArrayList<>();
+        gridlist.add(gridAdj);
+        ContextItem gridballItem = new ContextItem(ball, gridlist, null);
+        ContextAction kickGridballAction = new ContextAction(kickitem, gridballItem);
+        actionList.add(kickGridballAction);
+
         return actionList;
     }
 }

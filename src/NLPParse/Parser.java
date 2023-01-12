@@ -24,11 +24,42 @@ public class Parser {
             wordSet.addAll(item.getAllWords());
         }
         List<Word> words = wordSet.stream().toList();
+        System.out.println(words);
 
-        
+        List<String> sentenceTokens = Arrays.stream(sanitise(sentence).split(" ")).toList();
+        List<List<Word>> possibleWords = new ArrayList<>();
+        for (String token : sentenceTokens) {
+            for (int i = 0; i < token.length(); i++) {
+                System.out.print(token.charAt(i));
+                System.out.print(' ');
+            }
+            System.out.println();
+            possibleWords.add(Word.matchWords(words, token));
+        }
+
+        System.out.println(possibleWords);
 
         return null;
     }
     public ParseResult structuredParse(){return null;}
     public ParseResult unstructuredParse(){return null;}
+
+    String sanitise(String sentence){
+        String cut = sentence.toLowerCase().strip();
+        String result = "";
+        boolean space = false;
+        for (int i = 0; i < cut.length(); i++) {
+            char c = cut.charAt(i);
+            if(c >= 'a' && c <= 'z'){
+                result += c;
+                space = false;
+            }
+            if(c == ' ' && !space){
+                result += c;
+                space = true;
+            }
+        }
+
+        return result;
+    }
 }
