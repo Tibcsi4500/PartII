@@ -1,14 +1,24 @@
 import NLPParse.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Test {
 
     public static void main(String[] args) {
         List<ContextAction> context = constructContext();
-        Parser parser = new Parser(false, false, false, context);
-        parser.parse(" Kick red ?!?! ball---  ");
+        List<Word> buzzwords = constructBuzzwords();
+        Parser parser = new Parser(false, true, true, context, buzzwords);
+        parser.parse("click kick red ball ?!?! with grid on red red ball---  ");
+    }
+
+    private static List<Word> constructBuzzwords(){
+        return Arrays.asList(
+                new Word("with", Word.Type.BUZZWORD),
+                new Word("on", Word.Type.BUZZWORD),
+                new Word("below", Word.Type.BUZZWORD)
+        );
     }
 
     private static List<ContextAction> constructContext(){
@@ -27,12 +37,14 @@ public class Test {
         actionList.add(kickballaction);
         actionList.add(kickgridaction);
 
+        /*
         Word gridAdj = new Word("grid", Word.Type.ADJECTIVE);
         List<Word> gridlist = new ArrayList<>();
         gridlist.add(gridAdj);
         ContextItem gridballItem = new ContextItem(ball, gridlist, null);
         ContextAction kickGridballAction = new ContextAction(kickitem, gridballItem);
         actionList.add(kickGridballAction);
+        */
 
         return actionList;
     }

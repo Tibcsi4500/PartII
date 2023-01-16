@@ -7,7 +7,7 @@ public class Word {
     public List<String> synonyms;
     public Type type;
     public boolean isInstance(String target){
-        return (string == target || synonyms.contains(target));
+        return (string.equals(target) || synonyms.contains(target));
     }
 
     public static List<Word> matchWords(List<Word> candidates, String target){
@@ -26,6 +26,7 @@ public class Word {
         }
         return results;
     }
+
     public static boolean hasType(List<Word> list, Type target){
         if(list == null)
             return false;
@@ -35,6 +36,29 @@ public class Word {
                 return true;
         }
         return false;
+    }
+
+    public static Word.Type mainType(List<Word> list){
+        if(list == null || list.isEmpty())
+            return Type.NONE;
+        Type resultType = list.get(0).type;
+        for (Word word : list) {
+            if(!word.type.equals(resultType)){
+                return Type.NONE;
+            }
+        }
+        return resultType;
+    }
+
+    public static Word getOfType(List<Word> list, Type target){
+        if(list == null)
+            return null;
+
+        for (Word word : list) {
+            if(word.type.equals(target))
+                return word;
+        }
+        return null;
     }
 
     public Word(String string, Type type) {

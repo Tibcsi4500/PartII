@@ -20,6 +20,10 @@ public class ContextAction {
         return result;
     }
 
+    public static MatchType match(ParseResult target){
+
+    }
+
     public ContextAction(ContextItem verb, ContextItem object) {
         this.verb = verb;
         this.object = object;
@@ -30,5 +34,15 @@ public class ContextAction {
         this.verb = verb;
         this.object = object;
         this.extraObjects = extraObjects;
+    }
+
+    public enum MatchType{
+        full,
+        noverb,
+        verbmiss,
+        noobj,
+        objmiss,
+        extmiss,
+        fullmiss
     }
 }

@@ -1,8 +1,21 @@
 package NLPParse;
 
-import java.util.List;
+import java.util.*;
 
 public class ParseResult {
-    ContextItem verb, object;
-    List<ContextItem> extraObjects;
+    public ContextItem verb, object;
+    public List<ContextItem> extraObjects;
+    public boolean isStructured;
+    public ParseResult() {
+        extraObjects = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        return "ParseResult{" +
+                "verb=" + verb +
+                ", object=" + object +
+                ", extraObjects=" + extraObjects +
+                '}';
+    }
 }

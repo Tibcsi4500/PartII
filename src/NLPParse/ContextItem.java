@@ -6,7 +6,6 @@ import java.util.List;
 public class ContextItem {
     public Word word;
     public List<Word> adjectives;
-    public Object reference;
 
     public List<Word> getAllWords(){
         List<Word> result = new ArrayList<>();
@@ -16,15 +15,54 @@ public class ContextItem {
         return result;
     }
 
+    public static ContextItem matchInList(ContextItem target, List<ContextItem> list){
+        if(target.word.type.equals(Word.Type.VERB)){
+            for (ContextItem possibleMatchingItem : list) {
+                if(possibleMatchingItem.word.equals(target.word)){
+                    return possibleMatchingItem;
+                }
+            }
+        } else {
+            int bestmatchScore = -1;
+            ContextItem bestmatchItem = null;
+            for (ContextItem possibleMatchingItem : list) {
+                int currentscore = possibleMatchingItem.matchObject(target);
+
+                if(bestmatchScore < currentscore){
+                    bestmatchScore = currentscore;
+                    bestmatchItem = possibleMatchingItem;
+                }
+            }
+            return bestmatchItem;
+        }
+
+        return null;
+    }
+
+    public int matchObject(ContextItem target){
+        if(!word.equals(target.word)){
+            return -1;
+        }
+
+        int matchScore = 0;
+        for (Word adjective : adjectives) {
+            if(target.adjectives.contains(adjective)){
+                matchScore++;
+            } else {
+                return -1;
+            }
+        }
+
+        return matchScore;
+    }
+
     public ContextItem(Word word, Object reference) {
         this.word = word;
         this.adjectives = new ArrayList<Word>();
-        this.reference = reference;
     }
     public ContextItem(Word word, List<Word> adjectives, Object reference) {
         this.word = word;
         this.adjectives = adjectives;
-        this.reference = reference;
     }
 
     public Integer match(List<Word> targetAdjectives, Word targetWord){
@@ -39,5 +77,10 @@ public class ContextItem {
                 return -1;
         }
         return matchCount;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + adjectives.toString() + word.string + "}";
     }
 }
