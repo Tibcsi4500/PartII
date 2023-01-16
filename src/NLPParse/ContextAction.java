@@ -20,8 +20,52 @@ public class ContextAction {
         return result;
     }
 
-    public static MatchType match(ParseResult target){
+    public MatchType match(ParseResult target){
+        int score = 0, miss = 0;
+        MatchType type = MatchType.complete;
 
+        if(target.verb != null){
+            if(target.verb == verb){
+                score++;
+            } else {
+                return MatchType.fullmiss;
+            }
+        } else {
+            type = MatchType.noverb;
+            miss++;
+        }
+
+        if(target.object != null){
+            if(target.object == object){
+                score++;
+            } else {
+                return MatchType.fullmiss;
+            }
+        } else {
+            type = MatchType.noobj;
+            miss++;
+        }
+
+        if(extraObjects.isEmpty()){
+            score++;
+        } else {
+            if(target.extraObjects.isEmpty()){
+                miss++;
+                type = MatchType.noext;
+            } else {
+                if(extraObjects.get(0) == target.extraObjects.get(0)){
+                    score++;
+                } else {
+                    return MatchType.fullmiss;
+                }
+            }
+        }
+
+        if(miss < 2){
+            return type;
+        } else {
+            return MatchType.fullmiss;
+        }
     }
 
     public ContextAction(ContextItem verb, ContextItem object) {
@@ -36,13 +80,20 @@ public class ContextAction {
         this.extraObjects = extraObjects;
     }
 
+    @Override
+    public String toString() {
+        return "ContextAction{" +
+                "verb=" + verb +
+                ", object=" + object +
+                ", extraObjects=" + extraObjects +
+                '}';
+    }
+
     public enum MatchType{
-        full,
+        complete,
         noverb,
-        verbmiss,
         noobj,
-        objmiss,
-        extmiss,
+        noext,
         fullmiss
     }
 }

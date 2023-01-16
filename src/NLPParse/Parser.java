@@ -56,12 +56,15 @@ public class Parser {
         }
 
         ParseResult initialParseResult = structuredEnabled?structuredParse(possibleWords):unstructuredParse(possibleWords);
-        System.out.println(initialParseResult);
 
         ParseResult matchedParseResult = new ParseResult();
         matchedParseResult.isStructured = initialParseResult.isStructured;
-        matchedParseResult.verb = ContextItem.matchInList(initialParseResult.verb, items);
-        matchedParseResult.object = ContextItem.matchInList(initialParseResult.object, items);
+        if(initialParseResult.verb != null){
+            matchedParseResult.verb = ContextItem.matchInList(initialParseResult.verb, items);
+        }
+        if(initialParseResult.object != null){
+            matchedParseResult.object = ContextItem.matchInList(initialParseResult.object, items);
+        }
         for (ContextItem extraObject : initialParseResult.extraObjects) {
             ContextItem localMatchResultItem = ContextItem.matchInList(extraObject, items);
             if(localMatchResultItem != null){
@@ -70,7 +73,43 @@ public class Parser {
         }
         System.out.println(matchedParseResult);
 
+        ContextAction best = null;
+        ContextAction.MatchType besttype = ContextAction.MatchType.fullmiss;
+        for (ContextAction possibleAction : context) {
+            ContextAction.MatchType type = possibleAction.match(matchedParseResult);
+            switch (type) {
+                case complete -> {
+                    return possibleAction;
+                }
+                case fullmiss -> {
+                    break;
+                }
+                default -> {
+                    if(best == null){
+                        best = possibleAction;
+                        besttype = type;
+                    }
+                    break;
+                }
+            }
+        }
 
+        System.out.println(best);
+        System.out.println(besttype);
+
+        switch (besttype) {
+            case noverb -> {
+                System.out.println("give new verb");
+            }
+            case noobj -> {
+                System.out.println();
+            }
+            case noext -> {
+            }
+            case fullmiss -> {
+                return null;
+            }
+        }
 
         return null;
     }

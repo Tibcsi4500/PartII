@@ -10,13 +10,15 @@ public class Test {
         List<ContextAction> context = constructContext();
         List<Word> buzzwords = constructBuzzwords();
         Parser parser = new Parser(false, true, true, context, buzzwords);
-        parser.parse("click kick red ball ?!?! with grid on red red ball---  ");
+        ContextAction finalAction = parser.parse("Kick the red ball with the grid.");
+        System.out.println(finalAction);
     }
 
     private static List<Word> constructBuzzwords(){
         return Arrays.asList(
                 new Word("with", Word.Type.BUZZWORD),
                 new Word("on", Word.Type.BUZZWORD),
+                new Word("the", Word.Type.BUZZWORD),
                 new Word("below", Word.Type.BUZZWORD)
         );
     }
@@ -31,7 +33,7 @@ public class Test {
         ContextItem redballitem = new ContextItem(ball, redlist, null);
         ContextItem redgriditem = new ContextItem(grid, redlist, null);
         ContextItem kickitem = new ContextItem(kick, null);
-        ContextAction kickballaction = new ContextAction(kickitem, redballitem);
+        ContextAction kickballaction = new ContextAction(kickitem, redballitem, Arrays.asList(redgriditem));
         ContextAction kickgridaction = new ContextAction(kickitem, redgriditem);
         List<ContextAction> actionList = new ArrayList<>();
         actionList.add(kickballaction);
