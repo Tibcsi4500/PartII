@@ -1,3 +1,4 @@
+import Console.ConsoleInteractions;
 import NLPParse.*;
 
 import java.util.ArrayList;
@@ -7,10 +8,12 @@ import java.util.List;
 public class Test {
 
     public static void main(String[] args) {
+        ConsoleInteractions.initalize();
+
         List<ContextAction> context = constructContext();
         List<Word> buzzwords = constructBuzzwords();
-        Parser parser = new Parser(false, true, true, context, buzzwords);
-        ContextAction finalAction = parser.parse("Kick the red ball with the grid.");
+        Parser parser = new Parser(true, true, true, context, buzzwords);
+        ContextAction finalAction = parser.parse("Kick the.");
         System.out.println(finalAction);
     }
 
@@ -33,7 +36,7 @@ public class Test {
         ContextItem redballitem = new ContextItem(ball, redlist, null);
         ContextItem redgriditem = new ContextItem(grid, redlist, null);
         ContextItem kickitem = new ContextItem(kick, null);
-        ContextAction kickballaction = new ContextAction(kickitem, redballitem, Arrays.asList(redgriditem));
+        ContextAction kickballaction = new ContextAction(kickitem, redballitem);
         ContextAction kickgridaction = new ContextAction(kickitem, redgriditem);
         List<ContextAction> actionList = new ArrayList<>();
         actionList.add(kickballaction);

@@ -1,5 +1,7 @@
 package NLPParse;
 
+import Console.ConsoleInteractions;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,21 +41,8 @@ public class Parser {
         wordSet.addAll(buzzwords);
 
         List<Word> words = wordSet.stream().collect(Collectors.toList());
-        System.out.println(words);
 
-        List<String> sentenceTokens = Arrays.stream(sanitise(sentence).split(" ")).collect(Collectors.toList());
-        List<List<Word>> possibleWords = new ArrayList<>();
-        for (String token : sentenceTokens) {
-            List<Word> possibilities = Word.matchWords(words, token);
-
-            if(possibilities.isEmpty() && !skipEnabled){
-                throw new FaultySentenceException(token, FaultySentenceException.FaultType.fillerword);
-            }
-
-            if(!possibilities.isEmpty() && !Word.mainType(possibilities).equals(Word.Type.BUZZWORD)){
-                possibleWords.add(possibilities);
-            }
-        }
+        List<List<Word>> possibleWords = getPossibleWords(words, sentence);
 
         ParseResult initialParseResult = structuredEnabled?structuredParse(possibleWords):unstructuredParse(possibleWords);
 
@@ -73,46 +62,110 @@ public class Parser {
         }
         System.out.println(matchedParseResult);
 
-        ContextAction best = null;
-        ContextAction.MatchType besttype = ContextAction.MatchType.fullmiss;
+        List<ContextAction> possibleMatchingActions = new ArrayList<>();
+        List<ContextItem> possibleMatchingItems = new ArrayList<>();
+        ContextAction.MatchType possibleMatchingType = ContextAction.MatchType.fullmiss;
         for (ContextAction possibleAction : context) {
             ContextAction.MatchType type = possibleAction.match(matchedParseResult);
             switch (type) {
                 case complete -> {
                     return possibleAction;
                 }
-                case fullmiss -> {
+                case noverb -> {
+                    possibleMatchingActions.add(possibleAction);
+                    possibleMatchingItems.add(possibleAction.verb);
+                    possibleMatchingType = ContextAction.MatchType.noverb;
                     break;
                 }
-                default -> {
-                    if(best == null){
-                        best = possibleAction;
-                        besttype = type;
+                case noobj -> {
+                    if(possibleAction.object.couldMatch(initialParseResult.object)){
+                        possibleMatchingActions.add(possibleAction);
+                        possibleMatchingItems.add(possibleAction.object);
                     }
+                    possibleMatchingType = ContextAction.MatchType.noobj;
+                    break;
+                }
+                case noext -> {
+                    initialParseResult.extraObjects.add(null);
+                    if(possibleAction.extraObjects.get(0).couldMatch(initialParseResult.extraObjects.get(0))){
+                        possibleMatchingActions.add(possibleAction);
+                        possibleMatchingItems.add(possibleAction.extraObjects.get(0));
+                    }
+                    possibleMatchingType = ContextAction.MatchType.noext;
                     break;
                 }
             }
         }
 
-        System.out.println(best);
-        System.out.println(besttype);
+        if(!callbackEnabled){
+            return null;
+        }
 
-        switch (besttype) {
+        List<Word> callbackWords = new ArrayList<>();
+        Set<Word> callbackWordSet = new HashSet<>();
+        for (ContextItem item : possibleMatchingItems) {
+            callbackWordSet.add(item.word);
+            callbackWordSet.addAll(item.adjectives);
+        }
+        callbackWords.addAll(callbackWordSet);
+
+        switch (possibleMatchingType) {
             case noverb -> {
-                System.out.println("give new verb");
+                String promptedVerb = ConsoleInteractions.prompt("What did you mean to do?");
+                ParseResult newVerb = structuredParse(getPossibleWords(callbackWords, promptedVerb));
+                matchedParseResult.verb = newVerb.verb;
             }
             case noobj -> {
-                System.out.println();
+                String promptedObject = ConsoleInteractions.prompt(
+                        "Which object did you mean to " + matchedParseResult.verb.word.string + "?\n" +
+                                possibleMatchingActions
+                );
+                List<List<Word>> tempPoss = getPossibleWords(callbackWords, promptedObject);
+                ParseResult newObject = structuredParse(tempPoss);
+                System.out.println(callbackWords);
+                matchedParseResult.object = newObject.object;
             }
             case noext -> {
+                return null;
             }
             case fullmiss -> {
                 return null;
             }
         }
 
+        for (ContextAction possibleAction : possibleMatchingActions) {
+            ContextAction.MatchType type = possibleAction.match(matchedParseResult);
+            switch (type) {
+                case complete -> {
+                    return possibleAction;
+                }
+                default -> {
+                    return null;
+                }
+            }
+        }
+
         return null;
     }
+
+    List<List<Word>> getPossibleWords(List<Word> words, String sentence) throws FaultySentenceException{
+        List<String> sentenceTokens = Arrays.stream(sanitise(sentence).split(" ")).collect(Collectors.toList());
+        List<List<Word>> possibleWords = new ArrayList<>();
+        for (String token : sentenceTokens) {
+            List<Word> possibilities = Word.matchWords(words, token);
+
+            if(possibilities.isEmpty() && !skipEnabled){
+                throw new FaultySentenceException(token, FaultySentenceException.FaultType.fillerword);
+            }
+
+            if(!possibilities.isEmpty() && !Word.mainType(possibilities).equals(Word.Type.BUZZWORD)){
+                possibleWords.add(possibilities);
+            }
+        }
+
+        return possibleWords;
+    }
+
     public ParseResult structuredParse(List<List<Word>> possibleWords) throws FaultySentenceException{
         ParseResult result = new ParseResult();
         result.isStructured = true;

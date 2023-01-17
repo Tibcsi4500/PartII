@@ -45,6 +45,10 @@ public class ContextItem {
         }
 
         int matchScore = 0;
+        if(target.adjectives.size() != adjectives.size()){
+            return -1;
+        }
+
         for (Word adjective : adjectives) {
             if(target.adjectives.contains(adjective)){
                 matchScore++;
@@ -54,6 +58,24 @@ public class ContextItem {
         }
 
         return matchScore;
+    }
+
+    public boolean couldMatch(ContextItem target){
+        if(target == null){
+            return true;
+        }
+
+        if(!target.word.equals(word)){
+            return false;
+        }
+
+        for (Word adjective : target.adjectives) {
+            if(!adjectives.contains(adjective)){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public ContextItem(Word word, Object reference) {
