@@ -113,20 +113,35 @@ public class Parser {
             case noverb -> {
                 String promptedVerb = ConsoleInteractions.prompt("What did you mean to do?");
                 ParseResult newVerb = structuredParse(getPossibleWords(callbackWords, promptedVerb));
-                matchedParseResult.verb = newVerb.verb;
+                matchedParseResult.verb = ContextItem.matchInList(newVerb.verb, possibleMatchingItems);
             }
             case noobj -> {
+                String possibleMatchingActionString = "";
+                for(ContextAction action : possibleMatchingActions){
+                    possibleMatchingActionString += action.object + ", ";
+                }
+
                 String promptedObject = ConsoleInteractions.prompt(
                         "Which object did you mean to " + matchedParseResult.verb.word.string + "?\n" +
-                                possibleMatchingActions
+                                possibleMatchingActionString.substring(0, possibleMatchingActionString.length()-2)
                 );
                 List<List<Word>> tempPoss = getPossibleWords(callbackWords, promptedObject);
                 ParseResult newObject = structuredParse(tempPoss);
-                System.out.println(callbackWords);
-                matchedParseResult.object = newObject.object;
+                matchedParseResult.object = ContextItem.matchInList(newObject.object, possibleMatchingItems);
             }
             case noext -> {
-                return null;
+                String possibleMatchingActionString = "";
+                for(ContextAction action : possibleMatchingActions){
+                    possibleMatchingActionString += action.extraObjects.get(0) + ", ";
+                }
+
+                String promptedObject = ConsoleInteractions.prompt(
+                        "Which object did you mean to use to " + matchedParseResult.verb.word.string + "?\n" +
+                                possibleMatchingActionString.substring(0, possibleMatchingActionString.length()-2)
+                );
+                List<List<Word>> tempPoss = getPossibleWords(callbackWords, promptedObject);
+                ParseResult newObject = structuredParse(tempPoss);
+                matchedParseResult.extraObjects.add(ContextItem.matchInList(newObject.object, possibleMatchingItems));
             }
             case fullmiss -> {
                 return null;
@@ -135,13 +150,8 @@ public class Parser {
 
         for (ContextAction possibleAction : possibleMatchingActions) {
             ContextAction.MatchType type = possibleAction.match(matchedParseResult);
-            switch (type) {
-                case complete -> {
-                    return possibleAction;
-                }
-                default -> {
-                    return null;
-                }
+            if(type.equals(ContextAction.MatchType.complete)){
+                return possibleAction;
             }
         }
 

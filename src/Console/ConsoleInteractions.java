@@ -12,15 +12,15 @@ public class ConsoleInteractions {
     }
     public static String prompt(String promptText){
         display(promptText);
+        String line = "";
+
         try{
-            String line = reader.readLine();
-            display(line);
-            return line;
+            line = reader.readLine();
         } catch (IOException e){
             error(e.toString());
-        } finally {
-            return "";
         }
+
+        return line;
     }
 
     public static void display(String text){

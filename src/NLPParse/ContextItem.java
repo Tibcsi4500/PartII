@@ -103,6 +103,10 @@ public class ContextItem {
 
     @Override
     public String toString() {
-        return "{" + adjectives.toString() + word.string + "}";
+        String result = "";
+        for (Word adjective : adjectives) {
+            result += adjective.string + " ";
+        }
+        return result + word.string;
     }
 }

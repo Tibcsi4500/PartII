@@ -13,8 +13,8 @@ public class Test {
         List<ContextAction> context = constructContext();
         List<Word> buzzwords = constructBuzzwords();
         Parser parser = new Parser(true, true, true, context, buzzwords);
-        ContextAction finalAction = parser.parse("Kick the.");
-        System.out.println(finalAction);
+        ContextAction finalAction = parser.parse(ConsoleInteractions.prompt("Give me a sentence to parse!"));
+        System.out.println("The action is: " + finalAction);
     }
 
     private static List<Word> constructBuzzwords(){
@@ -37,7 +37,7 @@ public class Test {
         ContextItem redgriditem = new ContextItem(grid, redlist, null);
         ContextItem kickitem = new ContextItem(kick, null);
         ContextAction kickballaction = new ContextAction(kickitem, redballitem);
-        ContextAction kickgridaction = new ContextAction(kickitem, redgriditem);
+        ContextAction kickgridaction = new ContextAction(kickitem, redgriditem, Arrays.asList(redballitem));
         List<ContextAction> actionList = new ArrayList<>();
         actionList.add(kickballaction);
         actionList.add(kickgridaction);
