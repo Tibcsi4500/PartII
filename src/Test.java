@@ -12,8 +12,11 @@ public class Test {
 
         List<ContextAction> context = constructContext();
         List<Word> buzzwords = constructBuzzwords();
-        Parser parser = new Parser(true, true, true, context, buzzwords);
-        ContextAction finalAction = parser.parse(ConsoleInteractions.prompt("Give me a sentence to parse!"));
+        Parser parser = new Parser(true, true, true, buzzwords);
+        ContextAction finalAction = parser.parse(
+                ConsoleInteractions.prompt("Give me a sentence to parse!"),
+                context
+        );
         System.out.println("The action is: " + finalAction);
     }
 
@@ -38,9 +41,11 @@ public class Test {
         ContextItem kickitem = new ContextItem(kick, null);
         ContextAction kickballaction = new ContextAction(kickitem, redballitem);
         ContextAction kickgridaction = new ContextAction(kickitem, redgriditem, Arrays.asList(redballitem));
+        ContextAction kickgridaction2 = new ContextAction(kickitem, redgriditem, Arrays.asList(redgriditem));
         List<ContextAction> actionList = new ArrayList<>();
         actionList.add(kickballaction);
         actionList.add(kickgridaction);
+        actionList.add(kickgridaction2);
 
         /*
         Word gridAdj = new Word("grid", Word.Type.ADJECTIVE);

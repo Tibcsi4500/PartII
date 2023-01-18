@@ -10,19 +10,19 @@ public class Parser {
     private List<ContextAction> context;
     private List<Word> buzzwords;
 
-    public Parser(boolean callbackEnabled, boolean skipEnabled, boolean structuredEnabled, List<ContextAction> context, List<Word> buzzwords) {
+    public Parser(boolean callbackEnabled, boolean skipEnabled, boolean structuredEnabled, List<Word> buzzwords) {
         this.callbackEnabled = callbackEnabled;
         this.skipEnabled = skipEnabled;
         this.structuredEnabled = structuredEnabled;
-        this.context = context;
         this.buzzwords = buzzwords;
     }
 
-    public ContextAction parse(String sentence){
+    public ContextAction parse(String sentence, List<ContextAction> context){
+        this.context = context;
         try{
             return innerParse(sentence);
         } catch (FaultySentenceException e){
-            System.out.println("Error: " + e.faultType.toString());
+            ConsoleInteractions.error(e.faultType.toString());
 
             return null;
         }
@@ -60,7 +60,6 @@ public class Parser {
                 matchedParseResult.extraObjects.add(localMatchResultItem);
             }
         }
-        System.out.println(matchedParseResult);
 
         List<ContextAction> possibleMatchingActions = new ArrayList<>();
         List<ContextItem> possibleMatchingItems = new ArrayList<>();
