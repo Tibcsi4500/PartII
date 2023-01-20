@@ -1,11 +1,15 @@
 package NLPParse;
 
+import MapEssentials.GameStatePiece;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContextAction {
     public ContextItem verb, object;
     public List<ContextItem> extraObjects;
+
+    public List<GameStatePiece> requirements, effects;
 
     public List<ContextItem> getAllContextItems(){
         if(verb == null || object == null || extraObjects == null){

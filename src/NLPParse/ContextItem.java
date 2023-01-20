@@ -7,6 +7,8 @@ public class ContextItem {
     public Word word;
     public List<Word> adjectives;
 
+    public Integer ID;
+
     public List<Word> getAllWords(){
         List<Word> result = new ArrayList<>();
         result.add(word);
