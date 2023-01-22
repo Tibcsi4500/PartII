@@ -8,7 +8,7 @@ public class Room {
     public Integer ID;
     public ContextItem roomItem;
     public Map<GameMode, List<ContextAction>> actions;
-    public Map<Direction, Room> layout;
+    public Map<Direction, Integer> layout;
     public List<ContextItem> objects;
 
     public enum Direction{

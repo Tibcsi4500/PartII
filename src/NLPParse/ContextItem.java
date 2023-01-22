@@ -6,7 +6,6 @@ import java.util.List;
 public class ContextItem {
     public Word word;
     public List<Word> adjectives;
-
     public Integer ID;
 
     public List<Word> getAllWords(){
@@ -80,11 +79,11 @@ public class ContextItem {
         return true;
     }
 
-    public ContextItem(Word word, Object reference) {
+    public ContextItem(Word word) {
         this.word = word;
         this.adjectives = new ArrayList<Word>();
     }
-    public ContextItem(Word word, List<Word> adjectives, Object reference) {
+    public ContextItem(Word word, List<Word> adjectives) {
         this.word = word;
         this.adjectives = adjectives;
     }

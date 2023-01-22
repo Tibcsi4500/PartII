@@ -84,6 +84,17 @@ public class ContextAction {
         this.extraObjects = extraObjects;
     }
 
+    public ContextAction(ContextItem verb, ContextItem object,
+                         List<ContextItem> extraObjects,
+                         List<GameStatePiece> requirements,
+                         List<GameStatePiece> effects) {
+        this.verb = verb;
+        this.object = object;
+        this.extraObjects = extraObjects;
+        this.requirements = requirements;
+        this.effects = effects;
+    }
+
     @Override
     public String toString() {
         return "ContextAction{" +

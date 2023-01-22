@@ -197,7 +197,7 @@ public class Parser {
                 }
                 if(Word.hasType(possibleWords.get(currentIndex), Word.Type.OBJECT)){
                     parsedObject = Word.getOfType(possibleWords.get(currentIndex), Word.Type.OBJECT);
-                    result.extraObjects.add(new ContextItem(parsedObject, parsedAdjectives, null));
+                    result.extraObjects.add(new ContextItem(parsedObject, parsedAdjectives));
                     currentIndex++;
                     break;
                 } else if(Word.hasType(possibleWords.get(currentIndex), Word.Type.ADJECTIVE)){
@@ -247,7 +247,7 @@ public class Parser {
                 }
                 if(Word.hasType(possibleWords.get(currentIndex), Word.Type.OBJECT)){
                     parsedObject = Word.getOfType(possibleWords.get(currentIndex), Word.Type.OBJECT);
-                    result.extraObjects.add(new ContextItem(parsedObject, parsedAdjectives, null));
+                    result.extraObjects.add(new ContextItem(parsedObject, parsedAdjectives));
                     break;
                 } else if(Word.hasType(possibleWords.get(currentIndex), Word.Type.ADJECTIVE)){
                     parsedAdjectives.add(Word.getOfType(possibleWords.get(currentIndex), Word.Type.ADJECTIVE));

@@ -9,6 +9,8 @@ import java.util.List;
 
 public class Engine {
     public static void run(){
+        ConsoleInteractions.initalize();
+
         String gamePath = ConsoleInteractions.prompt("Give me the game's path!");
         Game game = Game.importGame(gamePath);
         Game.currentGame = game;

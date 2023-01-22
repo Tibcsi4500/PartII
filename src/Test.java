@@ -36,9 +36,9 @@ public class Test {
         Word ball = new Word("ball", Word.Type.OBJECT);
         Word grid = new Word("grid", Word.Type.OBJECT);
         Word kick = new Word("kick", Word.Type.VERB);
-        ContextItem redballitem = new ContextItem(ball, redlist, null);
-        ContextItem redgriditem = new ContextItem(grid, redlist, null);
-        ContextItem kickitem = new ContextItem(kick, null);
+        ContextItem redballitem = new ContextItem(ball, redlist);
+        ContextItem redgriditem = new ContextItem(grid, redlist);
+        ContextItem kickitem = new ContextItem(kick);
         ContextAction kickballaction = new ContextAction(kickitem, redballitem);
         ContextAction kickgridaction = new ContextAction(kickitem, redgriditem, Arrays.asList(redballitem));
         ContextAction kickgridaction2 = new ContextAction(kickitem, redgriditem, Arrays.asList(redgriditem));

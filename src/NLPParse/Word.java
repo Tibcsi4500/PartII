@@ -6,6 +6,8 @@ public class Word {
     public String string;
     public List<String> synonyms;
     public Type type;
+    public Integer ID;
+
     public boolean isInstance(String target){
         return (string.equals(target) || synonyms.contains(target));
     }
@@ -17,9 +19,6 @@ public class Word {
 
         List<Word> results = new ArrayList<>();
         for (Word candidate : candidates) {
-            if(target == "kick"){
-                System.out.println("heyhey");
-            }
             if(candidate.isInstance(target)){
                 results.add(candidate);
             }
