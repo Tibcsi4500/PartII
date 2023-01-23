@@ -82,10 +82,12 @@ public class ContextItem {
     public ContextItem(Word word) {
         this.word = word;
         this.adjectives = new ArrayList<Word>();
+        this.ID = -1;
     }
     public ContextItem(Word word, List<Word> adjectives) {
         this.word = word;
         this.adjectives = adjectives;
+        this.ID = -1;
     }
 
     public Integer match(List<Word> targetAdjectives, Word targetWord){

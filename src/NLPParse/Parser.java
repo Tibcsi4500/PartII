@@ -40,7 +40,7 @@ public class Parser {
         }
         wordSet.addAll(buzzwords);
 
-        List<Word> words = wordSet.stream().collect(Collectors.toList());
+        List<Word> words = new ArrayList<>(wordSet);
 
         List<List<Word>> possibleWords = getPossibleWords(words, sentence);
 
@@ -68,7 +68,7 @@ public class Parser {
             ContextAction.MatchType type = possibleAction.match(matchedParseResult);
             switch (type) {
                 case complete -> {
-                    return possibleAction;
+                    return new ContextAction(possibleAction, matchedParseResult);
                 }
                 case noverb -> {
                     possibleMatchingActions.add(possibleAction);
@@ -100,13 +100,12 @@ public class Parser {
             return null;
         }
 
-        List<Word> callbackWords = new ArrayList<>();
         Set<Word> callbackWordSet = new HashSet<>();
         for (ContextItem item : possibleMatchingItems) {
             callbackWordSet.add(item.word);
             callbackWordSet.addAll(item.adjectives);
         }
-        callbackWords.addAll(callbackWordSet);
+        List<Word> callbackWords = new ArrayList<>(callbackWordSet);
 
         switch (possibleMatchingType) {
             case noverb -> {
@@ -150,7 +149,7 @@ public class Parser {
         for (ContextAction possibleAction : possibleMatchingActions) {
             ContextAction.MatchType type = possibleAction.match(matchedParseResult);
             if(type.equals(ContextAction.MatchType.complete)){
-                return possibleAction;
+                return new ContextAction(possibleAction, matchedParseResult);
             }
         }
 

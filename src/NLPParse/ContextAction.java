@@ -25,13 +25,11 @@ public class ContextAction {
     }
 
     public MatchType match(ParseResult target){
-        int score = 0, miss = 0;
+        int miss = 0;
         MatchType type = MatchType.complete;
 
         if(target.verb != null){
-            if(target.verb == verb){
-                score++;
-            } else {
+            if(target.verb != verb){
                 return MatchType.fullmiss;
             }
         } else {
@@ -40,9 +38,7 @@ public class ContextAction {
         }
 
         if(target.object != null){
-            if(target.object == object){
-                score++;
-            } else {
+            if(target.object != object){
                 return MatchType.fullmiss;
             }
         } else {
@@ -50,16 +46,12 @@ public class ContextAction {
             miss++;
         }
 
-        if(extraObjects.isEmpty()){
-            score++;
-        } else {
+        if(!extraObjects.isEmpty()){
             if(target.extraObjects.isEmpty()){
                 miss++;
                 type = MatchType.noext;
             } else {
-                if(extraObjects.get(0) == target.extraObjects.get(0)){
-                    score++;
-                } else {
+                if(extraObjects.get(0) != target.extraObjects.get(0)){
                     return MatchType.fullmiss;
                 }
             }
@@ -93,6 +85,18 @@ public class ContextAction {
         this.extraObjects = extraObjects;
         this.requirements = requirements;
         this.effects = effects;
+    }
+
+    public ContextAction(ContextAction source, ParseResult extra){
+        this.verb = source.verb;
+        this.object = source.object;
+        this.requirements = source.requirements;
+        this.effects = source.effects;
+        if(source.extraObjects.isEmpty()){
+            this.extraObjects = extra.extraObjects;
+        } else {
+            this.extraObjects = source.extraObjects;
+        }
     }
 
     @Override

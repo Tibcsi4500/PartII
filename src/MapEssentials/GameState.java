@@ -3,20 +3,42 @@ package MapEssentials;
 import Console.ConsoleInteractions;
 import NLPParse.ContextAction;
 import NLPParse.ContextItem;
+import NLPParse.Word;
 
+import java.io.*;
 import java.util.*;
 
-public class GameState {
-    public Room position;
-    public List<ContextItem> inventory;
+public class GameState implements Serializable {
+    public Integer position;
+    public List<Integer> inventory;
     public Map<String, Boolean> flags;
-    public GameMode gameMode;
+    public Integer gameMode;
+    public List<List<Integer>> objectLocations;
+
+    public Game game;
 
     public List<ContextAction> generateContext() {
         List<ContextAction> context = new ArrayList<>();
-        context.addAll(position.actions.get(gameMode));
-        context.addAll(gameMode.actions);
+        context.addAll(game.rooms.get(position).actions.get(game.gameModes.get(gameMode)));
+        context.addAll(game.gameModes.get(gameMode).actions);
+        context.addAll(generateExceptionalContext());
         return context;
+    }
+
+    private List<ContextAction> generateExceptionalContext(){
+        ContextItem game = new ContextItem(new Word("game", Word.Type.OBJECT));
+
+        ContextAction save = new ContextAction(
+                new ContextItem(new Word("save", Word.Type.VERB)),
+                game
+        );
+
+        ContextAction load = new ContextAction(
+                new ContextItem(new Word("load", Word.Type.VERB)),
+                game
+        );
+
+        return Arrays.asList(save, load);
     }
 
     public boolean execute(List<GameStatePiece> effects){
@@ -25,17 +47,17 @@ public class GameState {
             switch (effect.type) {
                 case invget -> {
                     Integer ID = (Integer) effect.target;
-                    inventory.add(Game.currentGame.allItems.get(ID));
+                    inventory.add(ID);
                     break;
                 }
                 case invlose -> {
                     Integer ID = (Integer) effect.target;
-                    inventory.remove(Game.currentGame.allItems.get(ID));
+                    inventory.remove(ID);
                     break;
                 }
                 case positionset -> {
                     Integer ID = (Integer) effect.target;
-                    position = Game.currentGame.rooms.get(ID);
+                    position = ID;
                     break;
                 }
                 case flagset -> {
@@ -45,7 +67,7 @@ public class GameState {
                 }
                 case modeset -> {
                     Integer ID = (Integer) effect.target;
-                    gameMode = Game.currentGame.gameModes.get(ID);
+                    gameMode = ID;
                     break;
                 }
                 case display -> {
@@ -70,14 +92,14 @@ public class GameState {
             switch (requirement.type) {
                 case invhas -> {
                     Integer ID = (Integer)requirement.target;
-                    if(inventory.contains(Game.currentGame.allItems.get(ID)) != requirement.positive){
+                    if(inventory.contains(ID) != requirement.positive){
                         return false;
                     }
                     break;
                 }
                 case positionget -> {
                     Integer ID = (Integer)requirement.target;
-                    if(position.ID.equals(ID) != requirement.positive){
+                    if(position.equals(ID) != requirement.positive){
                         return false;
                     }
                     break;
@@ -91,7 +113,7 @@ public class GameState {
                 }
                 case modeget -> {
                     Integer ID = (Integer)requirement.target;
-                    if(gameMode.ID.equals(ID) != requirement.positive){
+                    if(gameMode.equals(ID) != requirement.positive){
                         return false;
                     }
                 }
@@ -102,5 +124,30 @@ public class GameState {
             }
         }
         return true;
+    }
+
+    public GameState(Integer position, List<Integer> inventory,
+                     Map<String, Boolean> flags, Integer gameMode,
+                     List<List<Integer>> objectLocations, Game game) {
+        this.position = position;
+        this.inventory = inventory;
+        this.flags = flags;
+        this.gameMode = gameMode;
+        this.objectLocations = objectLocations;
+        this.game = game;
+    }
+
+    public static void Save(GameState state) throws Exception {
+        ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(state.game.name + ".save"));
+        stream.writeObject(state);
+        stream.close();
+    }
+
+    public static GameState Load(Game game) throws Exception {
+        ObjectInputStream stream = new ObjectInputStream(new FileInputStream(game.name + ".save"));
+        GameState result = (GameState) stream.readObject();
+        result.game = game;
+        stream.close();
+        return result;
     }
 }
