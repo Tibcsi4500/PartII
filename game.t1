@@ -1,0 +1,31 @@
+Gamename
+Game Desc
+True;True;True
+8
+OBJECT:sphere:ball
+ADJECTIVE::red
+VERB::kick
+VERB::pump
+VERB::pick
+OBJECT::up
+VERB::put
+OBJECT::down
+7
+1:0
+:2
+:3
+:4
+:5
+:6
+:7
+2
+0pickup:True
+kickable:False
+1
+mainmode:1&0&&flagget@kickable@True%invhas@0@True&display@Kicked the ball@True;3&4&&&;5&6&&&
+1
+mainroom:This is the main room:0$2&0&&&flagset@kickable@True%display@Now you can kick the ball@True::0
+0
+0
+## 2&0&&flagset@kickable@True&display@Now you can kick the ball@True
+## 3 4 and 5 6

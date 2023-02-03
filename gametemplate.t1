@@ -1,0 +1,26 @@
+Gamename
+Game Desc
+Parser Options -> 3 bools callback;skip;structured
+wordcount
+wordtype:synonym1;synonym2:word
+itemcount
+adjective1;adjective2:word
+flagcount
+flagname:bool
+gamemode count
+name:action1;action2
+roomcount
+name:desc:gamemode1$action1;gamemode2$action2:direction1$roomid1;direction2$roomid2:object1;object2
+
+## actions are parsed as follows: 
+verbid & objectid & extraObject1 % extraObject2 & req1 % req2 & eff1 % eff2
+
+## 1&0&&flagget@kickable@True&display@Ha@True
+
+## statePieces are parsed as follows:
+## ## for flags and display:
+type@targetstring@positive
+## ## otherwise:
+type@targetID@positive
+
+## flagget@kickable@True
